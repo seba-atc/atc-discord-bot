@@ -327,7 +327,11 @@ Respondé SOLO con el Markdown del cuerpo del ticket.`;
 
 // ─── Helpers ───────────────────────────────────────────────────────────────
 function extractRequirementsData(text) {
-  const match = text.match(/REQUIREMENTS_COMPLETE\s*(\{[\s\S]*?\})\s*REQUIREMENTS_END/);
+  // Intentar con REQUIREMENTS_END (formato completo)
+  let match = text.match(/REQUIREMENTS_COMPLETE\s*(\{[\s\S]*?\})\s*REQUIREMENTS_END/);
+  // Fallback: sin REQUIREMENTS_END (el AI a veces lo omite)
+  if (!match) match = text.match(/REQUIREMENTS_COMPLETE\s*(\{[\s\S]*?\})\s*$/);
+  if (!match) match = text.match(/REQUIREMENTS_COMPLETE\s*(\{[\s\S]*\})/);
   if (!match) return null;
   try {
     return JSON.parse(match[1]);
