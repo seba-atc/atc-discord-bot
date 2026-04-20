@@ -336,8 +336,16 @@ function extractRequirementsData(text) {
   try {
     return JSON.parse(match[1]);
   } catch (e) {
-    logError('❌ Error parseando JSON:', e.message);
-    return null;
+    // Intentar sanear JSON con backslashes sin escapar (ej: /\D/g → /\\D/g)
+    try {
+      const sanitized = match[1]
+        .replace(/\\(?!["\\/bfnrtu])/g, '\\\\')  // escapar backslashes sueltos
+        .replace(/[\x00-\x1F\x7F]/g, ' ');        // eliminar control chars
+      return JSON.parse(sanitized);
+    } catch (e2) {
+      logError('❌ Error parseando JSON (incluso saneado):', e2.message, '\nRaw:', match[1].substring(0, 200));
+      return null;
+    }
   }
 }
 
