@@ -375,7 +375,7 @@ async function runRequirementsAgentTurn(conv, userMessage) {
 
   const response = await anthropic.messages.create({
     model: MODEL_REQUIREMENTS,
-    max_tokens: 600,
+    max_tokens: 2000,
     system: buildRequirementsSystemPrompt(conv.project),
     messages: conv.messages,
   });
